@@ -239,6 +239,8 @@ export default async function routingHandler(
     };
   } catch (e) {
     error("Error in routingHandler", e);
+    console.log("Stack trace", (e as Error).stack);
+    
     // In case of an error, we want to return the 500 page from Next.js
     return {
       internalEvent: {

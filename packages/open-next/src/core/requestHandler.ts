@@ -153,6 +153,15 @@ export async function openNextHandler(
       const preprocessedEvent = routingResult.internalEvent;
       debug("preprocessedEvent", preprocessedEvent);
       const { search, pathname, hash } = new URL(preprocessedEvent.url);
+      // let parsedBody: any = preprocessedEvent.body;
+      // console.log(preprocessedEvent.headers["content-type"])
+      // if (preprocessedEvent.headers["content-type"] === "application/json" && preprocessedEvent.body) {
+      //   try {
+      //     parsedBody = JSON.parse(preprocessedEvent.body.toString());
+      //   } catch (err) {
+      //     console.error("Failed to parse JSON body:", err);
+      //   }
+      // }
       const reqProps = {
         method: preprocessedEvent.method,
         url: `${pathname}${search}${hash}`,
@@ -214,7 +223,13 @@ async function processRequest(
   // @ts-ignore
   // Next.js doesn't parse body if the property exists
   // https://github.com/dougmoscrop/serverless-http/issues/227
-  delete req.body;
+  // delete req.body;
+  if(!req.body){
+   (req as any).body = JSON.stringify({});
+  }
+  else {
+    delete (req as any).body;
+  }
 
   try {
     //#override applyNextjsPrebundledReact

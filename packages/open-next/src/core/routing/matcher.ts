@@ -198,7 +198,10 @@ export function handleRewrites<T extends RewriteDefinition>(
     const pathToUse = rewrite.locale === false ? rawPath : localizedRawPath;
 
     debug("urlParts", { pathname, protocol, hostname, queryString });
-    const toDestinationPath = compile(escapeRegex(pathname, { isPath: true }));
+    const toDestinationPath = compile(escapeRegex(pathname, { isPath: true }), {
+      encode: (value) => value, // Evita re-escapar valores
+      validate: false, // Desativa validação para permitir múltiplos segmentos
+    });
     const toDestinationHost = compile(escapeRegex(hostname));
     const toDestinationQuery = compile(escapeRegex(queryString));
     const params = {
@@ -216,6 +219,8 @@ export function handleRewrites<T extends RewriteDefinition>(
       }, {}),
     };
     const isUsingParams = Object.keys(params).length > 0;
+    console.log("params", params);
+    
     let rewrittenQuery = queryString;
     let rewrittenHost = hostname;
     let rewrittenPath = pathname;
